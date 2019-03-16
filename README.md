@@ -15,7 +15,7 @@ A contract mapping is a json file containing a WireMock stub definition. More in
 
 #### Contract artifact
 
-A contract artifact is an archive file (zip, jar, ...) that contains WireMock json mappings generated from contracts. If the artifact contains the contract mappings for multiple consumers then it needs to seperate these in different directories using the consumer name as the identifier. This identifier can then be used as the value of the `consumerName` option when creating a `StubRunner`.
+A contract artifact is an archive file (zip, jar, ...) that contains WireMock json mappings generated from contracts. If the artifact contains the contract mappings for multiple consumers then it needs to seperate these in different directories using the consumer name as the identifier. This identifier can then be used as the value of the `consumerName` option when creating a StubRunner.
 
 #### Artifact reference
 
@@ -32,7 +32,7 @@ __Example:__
 
 ## StubRunner
 
-The `StubRunner` class is the entrypoint of the library. It is used to start a WireMock standalone server for each defined contract artifact.  
+The StubRunner class is the entrypoint of the library. It is used to start a WireMock standalone server for each defined contract artifact.  
 
 ### Options
 
@@ -50,7 +50,7 @@ export interface StubRunnerOptions {
 
 __Example:__
 
-```js
+```
 {
     "consumerName": "frontend"",
     "wireMockArtifact": "com.github.tomakehurst:wiremock-standalone:2.21.0",
@@ -84,7 +84,7 @@ export interface ContractPortMappings {
 
 __Example:__
 
-```js
+```
 {
     8080: "com.company:service1-contracts:1.0.0:stubs",
     8081: "com.company:service2-contracts:1.0.0:stubs",
@@ -136,17 +136,17 @@ describe('Person API', () => {
 
 ## Error messages
 
-#### error: Request was not matched
+#### Error: Request was not matched
 
-This error specifies that the HTTP client on the consuming side made a request that did not match the contract. The `StubRunner` will log the 'Closest stub' that was found and the 'Request' that was made. Use this information to find which part of the request did not match the contract.
+This error specifies that the HTTP client on the consuming side made a request that did not match the contract. The StubRunner will log the 'Closest stub' that was found and the 'Request' that was made. Use this information to find which part of the request did not match the contract.
 
 #### Error: Invalid or corrupt jarfile .\wire-mock.jar
 
 This is currently an unresolved error. You can try to put the WireMock artifact in a local registry and see if this helps.
 
-#### error: '`${artifactReference}`' could not be found in any of the declared repositories
+#### Error: '`${artifactReference}`' could not be found in any of the declared repositories
 
-If you encounter this error make sure that the artifact is present in one of the declared repositories. You can specify the repositories by using the `artifactRepositories` when creating a `StubRunner`. Make sure that you use `~/.m2/repository/` for your local maven registry and not `~/.m2/`.
+If you encounter this error make sure that the artifact is present in one of the declared repositories. You can specify the repositories by using the `artifactRepositories` when creating a StubRunner. Make sure that you use `~/.m2/repository/` for your local maven registry and not `~/.m2/`.
 
 ## Supported libraries
 
