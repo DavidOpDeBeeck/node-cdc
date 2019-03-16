@@ -1,11 +1,30 @@
-## Introduction
+## Contents
 
-Consumer Driven Contracts are a pattern that drives the development of the producer from its consumer's point of view. It is TDD for services.
-This library provides an implementation for JavaScript consumers to verify if they satisfy externally defined HTTP contracts.
+* [Installation](#installation)
+* [Introduction](#introduction)
+* [Concepts](#concepts)
+    * [Contract mapping](#contract-mapping)
+    * [Contract artifact](#contract-artifact)
+    * [Artifact reference](#artifact-reference)
+* [Library](#library) 
+    * [Configuration](#configuration) 
+        * [Consumer name](#consumer-name) 
+        * [Wiremock artifact](#wiremock-artifact) 
+        * [Artifact repositories](#artifact-repositories) 
+    * [Usage](#usage) 
+* [Error messages](#error-messages)
+* [Supported libraries](#supported-libraries)
+
+## Installation
 
 ```sh
 npm install node-cdc
 ```
+
+## Introduction
+
+Consumer Driven Contracts are a pattern that drives the development of the producer from its consumer's point of view. It is TDD for services.
+This library provides an implementation for JavaScript consumers to verify if they satisfy externally defined HTTP contracts.
 
 ## Concepts
 
@@ -19,42 +38,21 @@ A contract artifact is an archive file (zip, jar, ...) that contains WireMock js
 
 #### Artifact reference
 
-Artifacts can be referenced by using the following format `${groupId}:${artifactId}:${version}(:${classifier})`.
+Artifacts can be referenced by using the following string format `${groupId}:${artifactId}:${version}(:${classifier})`.
 
-__Example:__
-
-```sh
-# WireMock standalone artifact
-'com.github.tomakehurst:wiremock-standalone:2.21.0'
-# Contract artifact
-'com.company:contracts:1.0.0:stubs'
-```
-
-## StubRunner
+## Library
 
 The StubRunner class is the entrypoint of the library. It is used to start a WireMock standalone server for each defined contract artifact.  
 
-### Options
+### Configuration
 
 The StubRunner can be configured using the `StubRunnerOptions` interface.
-
-__TypeScript:__
 
 ```js
 export interface StubRunnerOptions {
     consumerName?: string,
     wireMockArtifact?: string,
     artifactRepositories: string[]
-}
-```
-
-__Example:__
-
-```
-{
-    "consumerName": "frontend"",
-    "wireMockArtifact": "com.github.tomakehurst:wiremock-standalone:2.21.0",
-    "artifactRepositories": ["~/.m2/repository/", "http://central.maven.org/maven2/"]
 }
 ```
 
@@ -74,8 +72,6 @@ Specifies the repository URIs to be used when downloading the WireMock standalon
 
 The StubRunner can be started using the `ContractPortMappings` interface. The interface uses the port as its key and the contract artifact reference as its value. 
 
-__TypeScript:__
-
 ```js
 export interface ContractPortMappings {
     [key: number]: string
@@ -84,20 +80,11 @@ export interface ContractPortMappings {
 
 __Example:__
 
-```
-{
-    8080: "com.company:service1-contracts:1.0.0:stubs",
-    8081: "com.company:service2-contracts:1.0.0:stubs",
-}
-```
-
-## Testing
-
 ```js
 import { StubRunner } from 'node-cdc';
 import { createPerson } from './person-client';
 
-const OPTIONS = {
+const STUBRUNNER_OPTIONS = {
   consumerName: 'frontend',
   artifactRepositories: [
       // local repository (in this example for the contract artifact)
@@ -113,7 +100,7 @@ const CONTRACT_MAPPINGS = {
 
 describe('Person API', () => {
 
-  let stubrunner = new StubRunner(OPTIONS);
+  let stubrunner = new StubRunner(STUBRUNNER_OPTIONS);
 
   beforeAll((done) => {
     stubrunner.start(CONTRACT_MAPPINGS)

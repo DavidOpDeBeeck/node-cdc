@@ -1,10 +1,14 @@
 {
   "name": "node-cdc",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A library for JavaScript consumers to verify if they satisfy externally defined HTTP contracts",
   "main": "./dist/index.js",
   "author": "David Op de Beeck",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DavidOpDeBeeck/node-cdc.git"
+  },
   "scripts": {
     "build": "tsc --declaration",
     "watch:build": "tsc --watch"
