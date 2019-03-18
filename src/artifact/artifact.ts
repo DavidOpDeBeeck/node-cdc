@@ -1,9 +1,13 @@
 import { join } from "path";
+import {requireDefined} from "../utils/utils";
 
 export class Artifact {
 
     static from(identifier: string): Artifact {
         const [groupId, artifactId, version, classifier] = identifier.split(':');
+        requireDefined(groupId, `groupId is a required field`);
+        requireDefined(artifactId, `artifactId is a required field`);
+        requireDefined(version, `version is a required field`);
         return new Artifact(groupId, artifactId, version, classifier);
     }
 

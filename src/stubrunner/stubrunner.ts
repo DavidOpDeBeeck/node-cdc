@@ -50,7 +50,7 @@ export class StubRunner {
             await this.downloadContracts(mappings);
             await this.startWireMockProcesses(mappings);
         } catch (e) {
-            logger.error(e);
+            logger.error(e.message ? e.message: e);
         }
     }
 
@@ -58,7 +58,7 @@ export class StubRunner {
         try {
             this.stopWireMockProcesses();
         } catch (e) {
-            logger.error(e);
+            logger.error(e.message ? e.message: e);
         }
     }
 
