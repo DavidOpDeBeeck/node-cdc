@@ -45,7 +45,6 @@ export class StubRunner {
 
     async start(mappings: ContractPortMappings): Promise<void> {
         try {
-            this.displayOptions();
             this.cleanWorkingDirectory();
             await this.downloadWireMock();
             await this.downloadContracts(mappings);
@@ -61,16 +60,6 @@ export class StubRunner {
         } catch (e) {
             logger.error(e);
         }
-    }
-
-    private displayOptions(): void {
-        startupLogger.info(`                                                                                       
- Version=${process.env.npm_package_version}
- ConsumerName=${this.consumerName}
- WireMockArtifact=${this.wireMockArtifact}
- ArtifactRepositories=[${this.artifactRepositories}]
- WorkingDirectory=${StubRunner.WORKING_DIRECTORY}
-`);
     }
 
     private cleanWorkingDirectory(): void {
