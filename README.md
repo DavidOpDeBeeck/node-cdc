@@ -5,7 +5,7 @@
 * [Concepts](#concepts)
     * [Contract mapping](#contract-mapping)
     * [Contract artifact](#contract-artifact)
-    * [Artifact reference](#artifact-reference)
+    * [Artifact](#artifact)
 * [Library](#library) 
     * [Configuration](#configuration) 
         * [Consumer name](#consumer-name) 
@@ -36,7 +36,7 @@ A contract mapping is a json file containing a WireMock stub definition. More in
 
 A contract artifact is an archive file (zip, jar, ...) that contains WireMock json mappings generated from contracts. If the artifact contains the contract mappings for multiple consumers then it needs to seperate these in different directories using the consumer name as the identifier. This identifier can then be used as the value of the `consumerName` option when creating a StubRunner.
 
-#### Artifact reference
+#### Artifact
 
 Artifacts can be referenced by using the following string format `${groupId}:${artifactId}:${version}(:${classifier})`.
 
@@ -52,7 +52,7 @@ The StubRunner can be configured using the `StubRunnerOptions` interface.
 export interface StubRunnerOptions {
     consumerName?: string,
     wireMockArtifact?: string,
-    artifactRepositories: string[]
+    repositoryManager: RepositoryManager
 }
 ```
 
@@ -64,9 +64,9 @@ Specifies the name of the consumer. This option will ensure that only the contra
 
 Specifies the WireMock standalone artifact reference. It will default to `com.github.tomakehurst:wiremock-standalone:2.21.0` if this option is not defined.
 
-#### Artifact repositories
+#### Repository manager
 
-Specifies the repository URIs to be used when downloading the WireMock standalone and contract artifacts. You can use `~/.m2/repository/` for the local maven repository and for example `http://central.maven.org/maven2/` for Maven Central. The order of the repositories is the order they will be queried, so it is recommended to put the local maven repository as the first entry.
+Specifies the repository manager to be used when downloading the WireMock standalone and contract artifacts. See the maven repository manager [documentation](https://github.com/DavidOpDeBeeck/maven-repository-manager) for more information
 
 ### Usage
 
@@ -85,13 +85,7 @@ import { StubRunner } from 'node-cdc';
 import { createPerson } from './person-client';
 
 const STUBRUNNER_OPTIONS = {
-  consumerName: 'frontend',
-  artifactRepositories: [
-      // local repository (in this example for the contract artifact)
-      '~/.m2/repository/', 
-      // remote repository (in this example for the WireMock artifact)
-      'http://central.maven.org/maven2/'
-  ]
+  consumerName: 'frontend'
 };
 
 const CONTRACT_MAPPINGS = {
@@ -127,7 +121,7 @@ describe('Person API', () => {
 
 This error specifies that the HTTP client on the consuming side made a request that did not match the contract. The StubRunner will log the 'Closest stub' that was found and the 'Request' that was made. Use this information to find which part of the request did not match the contract.
 
-#### Error: Invalid or corrupt jarfile .\wire-mock.jar
+#### Error: Invalid or corrupt jarfile .\wiremock.jar
 
 This is currently an unresolved error. You can try to put the WireMock artifact in a local registry and see if this helps.
 

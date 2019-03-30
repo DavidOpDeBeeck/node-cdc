@@ -1,22 +1,19 @@
-import { ArtifactRepository } from './../artifact/artifact.repository';
-import { join } from "path";
-import { sync } from "rimraf";
-import { mkdirSync, createWriteStream } from "fs";
-import { ArtifactDownloader } from "../artifact/artifact.downloader";
-import { pipeAsync } from "../utils/stream";
-import { Artifact } from "../artifact/artifact";
-import { Parse, Entry } from "unzipper";
+import {join} from "path";
+import {sync} from "rimraf";
+import {createWriteStream, mkdirSync} from "fs";
+import {pipeAsync} from "../utils/stream";
+import {Entry, Parse} from "unzipper";
 import * as etl from 'etl';
-import { createRepository } from "../artifact/artifact.repository";
-import { spawn, ChildProcess } from "child_process";
-import { splitNewLines } from "../utils/utils";
-import { logger, startupLogger, createBasicLogger } from "../utils/logger";
-import { tmpdir } from 'os';
+import {ChildProcess, spawn} from "child_process";
+import {splitNewLines} from "../utils/utils";
+import {createBasicLogger, logger} from "../utils/logger";
+import {tmpdir} from 'os';
+import {Artifact, RepositoryManager} from "maven-repository-manager";
 
 export interface StubRunnerOptions {
     consumerName?: string,
     wireMockArtifact?: string,
-    artifactRepositories: string[]
+    repositoryManager?: RepositoryManager
 }
 
 export interface ContractPortMappings {
@@ -31,16 +28,14 @@ export class StubRunner {
 
     private readonly consumerName: string;
     private readonly wireMockArtifact: Artifact;
-    private readonly artifactRepositories: ArtifactRepository[];
+    private readonly repositoryManager: RepositoryManager;
 
     private wireMockProcesses: ChildProcess[] = [];
-    private artifactDownloader: ArtifactDownloader;
 
     constructor(options: StubRunnerOptions) {
         this.consumerName = options.consumerName;
         this.wireMockArtifact = Artifact.from(options.wireMockArtifact || StubRunner.WIRE_MOCK_ARTIFACT_REFERENCE);
-        this.artifactRepositories = options.artifactRepositories.map(createRepository);
-        this.artifactDownloader = new ArtifactDownloader(this.artifactRepositories);
+        this.repositoryManager = options.repositoryManager || new RepositoryManager();
     }
 
     async start(mappings: ContractPortMappings): Promise<void> {
@@ -68,7 +63,7 @@ export class StubRunner {
     }
 
     private async downloadWireMock(): Promise<void> {
-        return this.artifactDownloader.downloadArtifact(this.wireMockArtifact)
+        return this.repositoryManager.download(this.wireMockArtifact)
             .then(stream => pipeAsync(stream, createWriteStream(StubRunner.WIRE_MOCK_FILE_PATH)));
     }
 
@@ -85,7 +80,7 @@ export class StubRunner {
     private async downloadContract(contractArtifact: Artifact, extractionPath: string): Promise<void> {
         const extractor = new ContractExtractor(this.consumerName, extractionPath);
 
-        return this.artifactDownloader.downloadArtifact(contractArtifact)
+        return this.repositoryManager.download(contractArtifact)
             .then(stream => stream.pipe(Parse())
                 .pipe(etl.map((entry: Entry) => extractor.handleEntry(entry)))
                 .promise());
