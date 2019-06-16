@@ -1,6 +1,6 @@
 {
   "name": "node-cdc",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A library for JavaScript consumers to verify if they satisfy externally defined HTTP contracts",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -18,11 +18,11 @@
     "@types/node": "^11.9.4",
     "@types/rimraf": "^2.0.2",
     "@types/unzipper": "^0.9.1",
-    "etl": "^0.5.19",
+    "etl": "^0.6.3",
     "rimraf": "^2.6.3",
     "typescript": "^3.3.3",
-    "unzipper": "^0.9.11",
+    "unzipper": "^0.10.0",
     "winston": "^3.2.1",
-    "maven-repository-manager": "^1.0.0"
+    "maven-repository-manager": "^1.0.2"
   }
 }
